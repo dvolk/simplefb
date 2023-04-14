@@ -11,6 +11,9 @@
      a {
          text-decoration: none;
      }
+     .topbtn {
+         line-height: 1; margin: 1px;
+     }
     </style>
 
     <body>
@@ -41,21 +44,21 @@
                 <h2><span class="w3-white w3-padding" style="font-family: monospace;">{{ icon('folder') }} {{ browse_dir.absolute().name }}/</span></h2>
                 <form method="POST" enctype="multipart/form-data">
                     <p>
-                        <a class="w3-btn w3-blue" href="{{ url_for('browse', browse_dir=browse_dir.absolute().parent) }}">
+                        <a class="w3-btn w3-blue topbtn" href="{{ url_for('browse', browse_dir=browse_dir.absolute().parent) }}">
                             {{ icon('circle-arrow-up') }} Go up
                         </a>
 
-                        <label for="file-upload" class="w3-btn w3-green">
+                        <label for="file-upload" class="w3-btn w3-green topbtn">
                             {{ icon('folder') }} Select files for upload
                         </label>
                         <input id="file-upload" name="file" type="file" style="display: none">
-                        <button class="w3-btn w3-green" type="submit" formaction="/upload">
+                        <button class="w3-btn w3-green topbtn" type="submit" formaction="/upload">
                             {{ icon('upload') }} Upload
                         </button>
-                        <button class="w3-btn w3-blue" type="submit" formaction="/zip">
+                        <button class="w3-btn w3-blue topbtn" type="submit" formaction="/zip">
                             {{ icon('file-zipper') }} Create archive
                         </button>
-                        <button class="w3-btn w3-red" type="submit" formaction="/delete">
+                        <button class="w3-btn w3-red topbtn" type="submit" formaction="/delete">
                             {{ icon('trash') }} Delete files
                         </button>
                     </p>
