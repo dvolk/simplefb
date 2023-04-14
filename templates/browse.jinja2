@@ -14,12 +14,16 @@
     </style>
 
     <body>
+        <header class="w3-container w3-black w3-bar">
+            <span class="w3-bar-item w3-large w3-right">
+                <a rel="noreferrer nofollow" target="_blank" href="https://github.com/dvolk/simplefb">
+                    {{ icon('code-branch') }} Simplefb
+                </a>
+            </span>
+        </header>
+
         <div class="w3-container">
-            <br/>
-            <div class="w3-container w3-yellow">
-                <h1>Files</h1>
-            </div>
-            <div class="w3-container w3-pale-yellow">
+            <div class="w3-container">
                 <br/>
 
                 <h2><span class="w3-white w3-padding" style="font-family: monospace;">{{ icon('folder') }} {{ browse_dir.absolute().name }}/</span></h2>
