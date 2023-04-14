@@ -106,7 +106,9 @@ def upload():
     browse_dir = flask.request.form.get("browse_dir", ".")
 
     if not f:
-        flask.flash("No file selected for uploading.")
+        flask.flash(
+            "No file selected for uploading. Click the button 'Select files for upload', then click Upload again."
+        )
         return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
 
     f.save(pathlib.Path(browse_dir) / werkzeug.utils.secure_filename(f.filename))
