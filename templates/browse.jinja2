@@ -26,6 +26,18 @@
             <div class="w3-container">
                 <br/>
 
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="w3-pale-red">
+                    <ul class="w3-ul">
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% endwith %}
+
                 <h2><span class="w3-white w3-padding" style="font-family: monospace;">{{ icon('folder') }} {{ browse_dir.absolute().name }}/</span></h2>
                 <form method="POST" enctype="multipart/form-data">
                     <p>

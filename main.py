@@ -9,6 +9,7 @@ import humanize
 import werkzeug
 
 app = flask.Flask(__name__)
+app.secret_key = b"secret"
 
 
 def icon(text):
@@ -30,12 +31,8 @@ def browse():
     """Browse files page."""
 
     # get query params
-    browse_dir = flask.request.args.get("browse_dir")
-    if not browse_dir:
-        browse_dir = "."
-    sort_by = flask.request.args.get("sort_by")
-    if not sort_by:
-        sort_by = "name"
+    browse_dir = flask.request.args.get("browse_dir", ".")
+    sort_by = flask.request.args.get("sort_by", "r_mtime")
 
     # get some data
     browse_dir = pathlib.Path(browse_dir)
@@ -46,16 +43,18 @@ def browse():
     # sort files
     if sort_by == "name":
         files = sorted(files, key=lambda x: x.name)
-    if sort_by == "mtime":
-        files = sorted(files, key=lambda x: x.stat().st_mtime)
-    if sort_by == "size":
-        files = sorted(files, key=lambda x: x.stat().st_size)
     if sort_by == "r_name":
         files = sorted(files, key=lambda x: x.name, reverse=True)
+    if sort_by == "mtime":
+        files = sorted(files, key=lambda x: x.stat().st_mtime)
     if sort_by == "r_mtime":
         files = sorted(files, key=lambda x: x.stat().st_mtime, reverse=True)
+    if sort_by == "size":
+        files = sorted(files, key=lambda x: x.stat().st_size)
     if sort_by == "r_size":
         files = sorted(files, key=lambda x: x.stat().st_size, reverse=True)
+
+    # directories first
     files = sorted(files, key=lambda x: x.is_dir(), reverse=True)
 
     return flask.render_template(
@@ -73,15 +72,21 @@ def browse():
 @app.route("/zip", methods=["POST"])
 def zip():
     files = flask.request.form.getlist("selfile")
-    browse_dir = flask.request.form.get("browse_dir")
+    browse_dir = flask.request.form.get("browse_dir", ".")
+
+    if not files:
+        flask.flash("No files selected for archiving.")
+        return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
 
     datetime_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     files_fmt = " ".join([shlex.quote(pathlib.Path(f).name) for f in files])
+    archive_file = f"archive-{datetime_now}.tar.gz"
 
-    cmd = f"cd {browse_dir}; tar czf archive-{datetime_now}.tar.gz {files_fmt} &"
+    cmd = f"cd {shlex.quote(browse_dir)}; tar czf {archive_file} {files_fmt} &"
     print(cmd)
     os.system(cmd)
 
+    flask.flash("Archiving selected files.")
     return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
 
 
@@ -97,9 +102,16 @@ def upload():
     print(flask.request)
     print(flask.request.form)
     print(flask.request.files)
-    f = flask.request.files["file"]
-    browse_dir = flask.request.form.get("browse_dir")
+    f = flask.request.files.get("file")
+    browse_dir = flask.request.form.get("browse_dir", ".")
+
+    if not f:
+        flask.flash("No file selected for uploading.")
+        return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
+
     f.save(pathlib.Path(browse_dir) / werkzeug.utils.secure_filename(f.filename))
+
+    flask.flash("File uploaded successfully")
     return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
 
 
@@ -108,11 +120,16 @@ def delete():
     files = flask.request.form.getlist("selfile")
     browse_dir = flask.request.form.get("browse_dir")
 
+    if not files:
+        flask.flash("No files selected for deletion.")
+        return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
+
     files_fmt = " ".join([shlex.quote(pathlib.Path(f).name) for f in files])
-    cmd = f"cd {browse_dir}; rm -rf {files_fmt} &"
+    cmd = f"cd {shlex.quote(browse_dir)}; rm -rf {files_fmt} &"
     print(cmd)
     os.system(cmd)
 
+    flask.flash("Deleting selected files.")
     return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
 
 
