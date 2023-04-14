@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+
+    <style>
+     a {
+         text-decoration: none;
+     }
+    </style>
+
+    <body>
+        <div class="w3-container">
+            <br/>
+            <div class="w3-container w3-yellow">
+                <h1>Files</h1>
+            </div>
+            <div class="w3-container w3-pale-yellow">
+                <br/>
+
+                <h2><span class="w3-white w3-padding" style="font-family: monospace;">{{ browse_dir.absolute().name }}/</span></h2>
+                <form method="POST" enctype="multipart/form-data">
+                    <p>
+                        <a class="w3-btn w3-blue" href="{{ url_for('browse', browse_dir=browse_dir.absolute().parent) }}">
+                            {{ icon('circle-arrow-up') }} Go up
+                        </a>
+
+                        <label for="file-upload" class="w3-btn w3-green">
+                            {{ icon('folder') }}Select files for upload
+                        </label>
+                        <input id="file-upload" name="file" type="file" style="display: none">
+                        <button class="w3-btn w3-green" type="submit" formaction="/upload">
+                            {{ icon('upload') }} Upload
+                        </button>
+                        <button class="w3-btn w3-blue" type="submit" formaction="/zip">
+                            {{ icon('file-zipper') }} Create archive
+                        </button>
+                        <button class="w3-btn w3-red" type="submit" formaction="/delete">
+                            {{ icon('trash') }} Delete files
+                        </button>
+                    </p>
+                    <input type="hidden" name="browse_dir" value="{{ browse_dir.absolute() }}">
+                    <p>
+                        <table class="w3-table-all">
+                            <thead>
+                                <th style="width: 30px;"></th>
+                                <th>
+                                    <a href="{{ url_for('browse', browse_dir=browse_dir, sort_by='r_name' if sort_by=='name' else 'name') }}">
+                                        {{ icon("sort") }}
+                                        Filename
+                                    </a>
+                                </th>
+                                <th style="text-align:right">
+                                    <a href="{{ url_for('browse', browse_dir=browse_dir, sort_by='r_size' if sort_by=='size' else 'size') }}">
+                                        {{ icon("sort") }}
+                                        Size
+                                    </a>
+                                </th>
+                                <th style="text-align:right">
+                                    <a href="{{ url_for('browse', browse_dir=browse_dir, sort_by='r_mtime' if sort_by=='mtime' else 'mtime' ) }}">
+                                        {{ icon("sort") }}
+                                        Modified
+                                    </a>
+                                </th>
+                            </thead>
+                            {% for file in files %}
+                            <tr>
+                                <td><input name="selfile" value="{{ file }}" type="checkbox"></td>
+                                <td>
+                                    {% if file.is_dir() %}
+                                    <a href="{{ url_for('browse', browse_dir=file) }}">
+                                        {{ icon("folder") }} {{ file.name }}
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('download', file=file.absolute()) }}">
+                                        {{ icon_regular("file") }} {{ file.name }}
+                                        {% endif %}
+                                    </a>
+                                </td>
+                                <td style="text-align:right">
+                                    {{ humanize.naturalsize(file.stat().st_size) }}
+                                </td>
+                                <td style="text-align:right">
+                                    {{ humanize.naturaldelta(epoch_time_now - file.stat().st_mtime) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </body>
+
+</html>
