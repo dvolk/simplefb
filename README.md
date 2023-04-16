@@ -1,6 +1,6 @@
 # simplefb
 
-simplefb is a demo of a flask and html-based file browser - no javascript used
+simplefb is a demo of a flask and html-based file browser
 
 <img src="https://i.imgur.com/jn0lQ6Q.png">
 
@@ -9,9 +9,9 @@ simplefb is a demo of a flask and html-based file browser - no javascript used
 - Browse file system
 - Sort columns
 - Download or view file
+- Upload files
 - Archive selected files
 - Delete selected files
-- Upload file
 
 ## Install & run
 
