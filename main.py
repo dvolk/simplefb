@@ -102,16 +102,11 @@ def upload():
     print(flask.request)
     print(flask.request.form)
     print(flask.request.files)
-    f = flask.request.files.get("file")
+    fs = flask.request.files.getlist("files")
     browse_dir = flask.request.form.get("browse_dir", ".")
 
-    if not f:
-        flask.flash(
-            "No file selected for uploading. Click the button 'Select files for upload', then click Upload again."
-        )
-        return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))
-
-    f.save(pathlib.Path(browse_dir) / werkzeug.utils.secure_filename(f.filename))
+    for f in fs:
+        f.save(pathlib.Path(browse_dir) / werkzeug.utils.secure_filename(f.filename))
 
     flask.flash("File uploaded successfully")
     return flask.redirect(flask.url_for("browse", browse_dir=browse_dir))

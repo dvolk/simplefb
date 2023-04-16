@@ -30,31 +30,32 @@
                 <br/>
 
                 {% with messages = get_flashed_messages() %}
-                {% if messages %}
                 <div class="w3-pale-red">
+                    {% if messages %}
                     <ul class="w3-ul">
                         {% for message in messages %}
                         <li>{{ message }}</li>
                         {% endfor %}
                     </ul>
+                    {% endif %}
                 </div>
-                {% endif %}
                 {% endwith %}
 
                 <h2><span class="w3-white w3-padding" style="font-family: monospace;">{{ icon('folder') }} {{ browse_dir.absolute().name }}/</span></h2>
                 <form method="POST" enctype="multipart/form-data">
+
+
                     <p>
                         <a class="w3-btn w3-blue topbtn" href="{{ url_for('browse', browse_dir=browse_dir.absolute().parent) }}">
                             {{ icon('circle-arrow-up') }} Go up
                         </a>
 
-                        <label for="file-upload" class="w3-btn w3-green topbtn">
-                            {{ icon('folder') }} Select file for upload
-                        </label>
-                        <input id="file-upload" name="file" type="file" style="display: none">
-                        <button class="w3-btn w3-green topbtn" type="submit" formaction="/upload">
-                            {{ icon('upload') }} Upload
+                        <input type="file" id="file-input" style="display: none" multiple>
+                        <button class="w3-btn w3-green topbtn" type="button"
+                                onclick="document.getElementById('file-input').click()">
+                            {{ icon('upload') }} Upload files
                         </button>
+
                         <button class="w3-btn w3-blue topbtn" type="submit" formaction="/zip">
                             {{ icon('file-zipper') }} Create archive
                         </button>
@@ -113,6 +114,36 @@
                 </form>
             </div>
         </div>
+
+        <script>
+         function uploadFiles(files) {
+             const formData = new FormData();
+             for (let i = 0; i < files.length; i++) {
+                 formData.append('files', files[i]);
+             }
+
+             const xhr = new XMLHttpRequest();
+             xhr.open('POST', '/upload');
+             xhr.onload = function() {
+                 if (xhr.status === 200) {
+                     alert('Upload complete!');
+                     location.reload();
+                 } else {
+                     alert('Upload failed. Please try again.');
+                 }
+             };
+             xhr.send(formData);
+         }
+         const handleFileSelect = (e) => {
+             const files = e.target.files;
+             if (files) {
+                 uploadFiles(files);
+             }
+         }
+
+         const fileInput = document.getElementById('file-input');
+         fileInput.addEventListener('change', handleFileSelect);
+        </script>
     </body>
 
 </html>
