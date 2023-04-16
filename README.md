@@ -2,7 +2,7 @@
 
 simplefb is a demo of a flask and html-based file browser
 
-<img src="https://i.imgur.com/jn0lQ6Q.png">
+<img src="https://i.imgur.com/fUIxW6A.png">
 
 ## Features
 
