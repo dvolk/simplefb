@@ -102,7 +102,9 @@
                                     </a>
                                 </td>
                                 <td style="text-align:right">
-                                    {% if not file.is_dir() %}
+                                    {% if file.is_dir() %}
+                                    &lt;dir&gt;
+                                    {% else %}
                                     {{ humanize.naturalsize(file.stat().st_size) }}
                                     {% endif %}
                                 </td>
