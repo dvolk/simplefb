@@ -102,7 +102,9 @@
                                     </a>
                                 </td>
                                 <td style="text-align:right">
+                                    {% if not file.is_dir() %}
                                     {{ humanize.naturalsize(file.stat().st_size) }}
+                                    {% endif %}
                                 </td>
                                 <td style="text-align:right">
                                     {{ humanize.naturaldelta(epoch_time_now - file.stat().st_mtime) }}
@@ -121,6 +123,7 @@
              for (let i = 0; i < files.length; i++) {
                  formData.append('files', files[i]);
              }
+             formData.append('browse_dir', '{{ browse_dir }}');
 
              const xhr = new XMLHttpRequest();
              xhr.open('POST', '/upload');
