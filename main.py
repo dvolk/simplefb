@@ -37,7 +37,9 @@ def browse():
     # get some data
     browse_dir = pathlib.Path(browse_dir)
     files = browse_dir.iterdir()
-    files = [f for f in files if not f.name.startswith(".")]
+    files = [
+        f for f in files if (f.is_file() or f.is_dir()) and not f.name.startswith(".")
+    ]
     epoch_time_now = int(time.time())
 
     # sort files
