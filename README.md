@@ -1,8 +1,8 @@
 # simplefb
 
-simplefb is a demo of a flask and html-based file browser
+simplefb is a simple flask and html-based file browser
 
-<img src="https://i.imgur.com/fUIxW6A.png">
+<img src="https://i.imgur.com/gSgtSCI.png">
 
 ## Features
 
